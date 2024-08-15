@@ -2,52 +2,93 @@ import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import dynamic from "next/dynamic";
-import { detectColumnTypes } from "../../services/analysisService";
-
-const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  detectColumnTypes,
+  calculateCorrelation,
+  CorrelationResult,
+} from "../../services/analysisService";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const CorrelationAnalysis: React.FC = () => {
   const { parsedData } = useSelector((state: RootState) => state.data);
 
+  console.log("Parsed Data:", parsedData); // Debug log
+
   const correlationData = useMemo(() => {
-    if (!parsedData || parsedData.length === 0) return null;
+    if (!parsedData || parsedData.length === 0) {
+      console.log("No parsed data available"); // Debug log
+      return null;
+    }
 
     const columnTypes = detectColumnTypes(parsedData);
+    console.log("Column Types:", columnTypes); // Debug log
+
     const numericColumns = Object.entries(columnTypes)
       .filter(([_, type]) => type === "numeric")
       .map(([column, _]) => column);
 
-    const correlationMatrix = numericColumns.map((col1) =>
-      numericColumns.map((col2) => {
-        const values1 = parsedData.map((row) => parseFloat(row[col1]));
-        const values2 = parsedData.map((row) => parseFloat(row[col2]));
-        const mean1 = values1.reduce((a, b) => a + b, 0) / values1.length;
-        const mean2 = values2.reduce((a, b) => a + b, 0) / values2.length;
-        const variance1 =
-          values1.reduce((a, b) => a + Math.pow(b - mean1, 2), 0) /
-          values1.length;
-        const variance2 =
-          values2.reduce((a, b) => a + Math.pow(b - mean2, 2), 0) /
-          values2.length;
-        const covariance =
-          values1.reduce(
-            (a, b, i) => a + (b - mean1) * (values2[i] - mean2),
-            0
-          ) / values1.length;
-        return covariance / Math.sqrt(variance1 * variance2);
-      })
-    );
+    console.log("Numeric Columns:", numericColumns); // Debug log
+
+    if (numericColumns.length === 0) {
+      console.log("No numeric columns detected"); // Debug log
+      return null;
+    }
+
+    const correlationMatrix: Record<
+      string,
+      Record<string, CorrelationResult>
+    > = {};
+
+    numericColumns.forEach((col1) => {
+      correlationMatrix[col1] = {};
+      numericColumns.forEach((col2) => {
+        if (col1 !== col2) {
+          correlationMatrix[col1][col2] = calculateCorrelation(
+            parsedData,
+            col1,
+            col2
+          );
+        }
+      });
+    });
+
+    console.log("Correlation Matrix:", correlationMatrix); // Debug log
 
     return {
-      z: correlationMatrix,
-      x: numericColumns,
-      y: numericColumns,
+      columns: numericColumns,
+      matrix: correlationMatrix,
     };
   }, [parsedData]);
 
-  if (!correlationData)
+  if (!correlationData) {
     return <div>No numeric data available for correlation analysis.</div>;
+  }
+
+  const { columns, matrix } = correlationData;
+
+  const getColorIntensity = (value: number | null) => {
+    if (value === null) return "bg-gray-200";
+    const absValue = Math.abs(value);
+    const intensity = Math.round(absValue * 100);
+    return value > 0 ? `bg-blue-${intensity}` : `bg-red-${intensity}`;
+  };
+
+  const formatCorrelation = (value: number | null) => {
+    return value !== null ? value.toFixed(2) : "N/A";
+  };
 
   return (
     <Card>
@@ -55,25 +96,60 @@ const CorrelationAnalysis: React.FC = () => {
         <CardTitle>Correlation Analysis</CardTitle>
       </CardHeader>
       <CardContent>
-        <Plot
-          data={[
-            {
-              type: "heatmap",
-              z: correlationData.z,
-              x: correlationData.x,
-              y: correlationData.y,
-              colorscale: "Viridis",
-            },
-          ]}
-          layout={{
-            width: 700,
-            height: 700,
-            title: "Correlation Heatmap",
-            xaxis: { title: "Features" },
-            yaxis: { title: "Features" },
-          }}
-          config={{ responsive: true }}
-        />
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Column</TableHead>
+                {columns.map((col) => (
+                  <TableHead key={col}>{col}</TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {columns.map((row) => (
+                <TableRow key={row}>
+                  <TableCell className="font-medium">{row}</TableCell>
+                  {columns.map((col) => (
+                    <TableCell key={`${row}-${col}`}>
+                      {row !== col ? (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <div
+                                className={`p-2 rounded ${getColorIntensity(
+                                  matrix[row][col].pearson
+                                )}`}
+                              >
+                                {formatCorrelation(matrix[row][col].pearson)}
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>
+                                Pearson:{" "}
+                                {formatCorrelation(matrix[row][col].pearson)}
+                              </p>
+                              <p>
+                                Spearman:{" "}
+                                {formatCorrelation(matrix[row][col].spearman)}
+                              </p>
+                              <p>
+                                Kendall:{" "}
+                                {formatCorrelation(matrix[row][col].kendall)}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : (
+                        "1.00"
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
