@@ -38,17 +38,8 @@ const EDA: React.FC = () => {
 
       if (type === "numeric") {
         const stats = calculateColumnStats(parsedData, column);
-        const outliers = values.filter((v) => {
-          const value = parseFloat(v);
-          return !isNaN(value) && (
-            value < stats.q1 - 1.5 * stats.iqr ||
-            value > stats.q3 + 1.5 * stats.iqr
-          );
-        }).length;
-
         analysisResult[column] = { 
           ...stats, 
-          outliers, 
           missingCount, 
           missingPercentage,
           uniqueCount,
@@ -69,7 +60,12 @@ const EDA: React.FC = () => {
           missingCount,
           missingPercentage,
           uniqueCount,
-          type
+          type,
+          variance: NaN,
+          skewness: NaN,
+          kurtosis: NaN,
+          validCount: parsedData.length - missingCount,
+          invalidCount: missingCount
         };
       }
     });
