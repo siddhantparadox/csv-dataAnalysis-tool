@@ -13,4 +13,10 @@ export interface ColumnStats {
   uniqueCount: number;
   type: string; // Add this line
   outliers: number; // Add this line if not already present
+  // Add these new properties
+  variance: number;
+  skewness: number;
+  kurtosis: number;
+  validCount: number;
+  invalidCount: number;
 }
