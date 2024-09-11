@@ -4,8 +4,8 @@ import { RootState } from "../../store";
 import {
   calculateColumnStats,
   detectColumnTypes,
-  ColumnStats,
 } from "../../services/analysisService";
+import { ColumnStats } from "../../types"; // Import from types
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,

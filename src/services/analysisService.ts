@@ -1,6 +1,9 @@
 import * as mathjs from "mathjs";
 import { ColumnStats } from '../types';
 
+// Export ColumnStats interface
+export { ColumnStats };
+
 export const calculateColumnStats = (
   data: any[],
   column: string
