@@ -30,18 +30,18 @@ const DataCleaning: React.FC = () => {
     try {
       switch (operation) {
         case "removeNulls":
-          newData = tidy(parsedData, (df) =>
+          newData = tidy(parsedData, (df: any[]) =>
             df.filter(
-              (d) => d[selectedColumn] != null && d[selectedColumn] !== ""
+              (d: any) => d[selectedColumn] != null && d[selectedColumn] !== ""
             )
           );
           break;
         case "removeDuplicates":
-          newData = tidy(parsedData, (df) =>
+          newData = tidy(parsedData, (df: any[]) =>
             df.filter(
-              (d, i, arr) =>
+              (d: any, i: number, arr: any[]) =>
                 arr.findIndex(
-                  (t) => t[selectedColumn] === d[selectedColumn]
+                  (t: any) => t[selectedColumn] === d[selectedColumn]
                 ) === i
             )
           );
@@ -50,14 +50,14 @@ const DataCleaning: React.FC = () => {
           newData = tidy(
             parsedData,
             mutate({
-              [selectedColumn]: (d) => {
-                const values = d.map((row) => parseFloat(row[selectedColumn]));
+              [selectedColumn]: (d: any[]) => {
+                const values = d.map((row: any) => parseFloat(row[selectedColumn]));
                 const mean = values.reduce((a, b) => a + b, 0) / values.length;
                 const std = Math.sqrt(
-                  values.reduce((a, b) => a + (b - mean) ** 2, 0) /
+                  values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) /
                     values.length
                 );
-                return (parseFloat(d[selectedColumn]) - mean) / std;
+                return values.map((v: number) => (v - mean) / std);
               },
             })
           );
@@ -68,14 +68,12 @@ const DataCleaning: React.FC = () => {
           newData = tidy(
             parsedData,
             mutate({
-              [`${selectedColumn}_binned`]: (d) => {
-                const values = d.map((row) => parseFloat(row[selectedColumn]));
+              [`${selectedColumn}_binned`]: (d: any[]) => {
+                const values = d.map((row: any) => parseFloat(row[selectedColumn]));
                 const min = Math.min(...values);
                 const max = Math.max(...values);
                 const binSize = (max - min) / bins;
-                return Math.floor(
-                  (parseFloat(d[selectedColumn]) - min) / binSize
-                );
+                return values.map((v: number) => Math.floor((v - min) / binSize));
               },
             })
           );
@@ -91,7 +89,7 @@ const DataCleaning: React.FC = () => {
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to apply operation: ${error.message}`,
+        description: `Failed to apply operation: ${(error as Error).message}`,
         variant: "destructive",
       });
     }
