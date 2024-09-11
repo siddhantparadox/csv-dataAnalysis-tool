@@ -19,6 +19,7 @@ const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 interface ChartData {
   data: Data[];
   layout: Partial<Layout>;
+  title: string; // Add this line
 }
 
 const DataVisualization: React.FC = () => {
@@ -52,6 +53,7 @@ const DataVisualization: React.FC = () => {
             } as Data,
           ],
           layout: { title: `Histogram of ${xAxis}` },
+          title: `Histogram of ${xAxis}`, // Add this line
         };
       case "scatter":
         if (!yAxis) return null;
@@ -69,6 +71,7 @@ const DataVisualization: React.FC = () => {
             xaxis: { title: xAxis },
             yaxis: { title: yAxis },
           },
+          title: `${xAxis} vs ${yAxis}`, // Add this line
         };
       case "box":
         return {
@@ -80,6 +83,7 @@ const DataVisualization: React.FC = () => {
             } as Data,
           ],
           layout: { title: `Box Plot of ${xAxis}` },
+          title: `Box Plot of ${xAxis}`, // Add this line
         };
       default:
         return null;
@@ -137,7 +141,7 @@ const DataVisualization: React.FC = () => {
       {chart && (
         <Card>
           <CardHeader>
-            <CardTitle>{chart.layout.title}</CardTitle>
+            <CardTitle>{chart.title}</CardTitle>
           </CardHeader>
           <CardContent>
             <Plot
