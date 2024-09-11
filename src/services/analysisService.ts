@@ -4,6 +4,13 @@ import { ColumnStats } from '../types';
 // Export ColumnStats interface
 export { ColumnStats };
 
+// Add this export
+export interface CorrelationResult {
+  pearson: number | null;
+  spearman: number | null;
+  kendall: number | null;
+}
+
 export const calculateColumnStats = (
   data: any[],
   column: string
