@@ -329,9 +329,7 @@ const Guide: React.FC = () => {
                   <ul className="list-disc pl-5 mt-2">
                     <li>Use column names exactly as they appear in your dataset</li>
                     <li>Wrap column names with spaces in square brackets, e.g., <code>[Total Sales]</code></li>
-                    <li>
-
-Test your formulas on a small subset of data first</li>
+                    <li>Test your formulas on a small subset of data first</li>
                     <li>Use parentheses to ensure operations are performed in the desired order</li>
                     <li>Take advantage of conditional calculations to create binary or categorical variables</li>
                   </ul>

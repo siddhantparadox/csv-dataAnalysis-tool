@@ -67,7 +67,7 @@ const FileUpload: React.FC = () => {
         parseFile(file);
       }
     },
-    [dispatch]
+    [dispatch, parseFile] // Add parseFile here
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -85,15 +85,16 @@ const FileUpload: React.FC = () => {
   return (
     <div
       {...getRootProps()}
-      className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:border-blue-500 transition-colors"
+      className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center"
     >
       <input {...getInputProps()} />
+      <p>Drag &apos;n&apos; drop some files here, or click to select files</p>
       {isDragActive ? (
         <p className="text-lg text-blue-600">Drop the file here ...</p>
       ) : (
         <div>
           <p className="text-lg mb-2">
-            Drag 'n' drop a file here, or click to select a file
+            Drag &apos;n&apos; drop some files here, or click to select files
           </p>
           <p className="text-sm text-gray-500">
             Supported formats: CSV, Excel (XLSX, XLS)
