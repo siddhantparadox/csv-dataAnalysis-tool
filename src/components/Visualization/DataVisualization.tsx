@@ -11,9 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Data, Layout } from "plotly.js";
 
 // Dynamically import Plotly with ssr: false
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
+
+interface ChartData {
+  data: Data[];
+  layout: Partial<Layout>;
+}
 
 const DataVisualization: React.FC = () => {
   const { parsedData } = useSelector((state: RootState) => state.data);
@@ -33,7 +39,7 @@ const DataVisualization: React.FC = () => {
     [columnTypes]
   );
 
-  const generateChart = () => {
+  const generateChart = (): ChartData | null => {
     if (!parsedData || parsedData.length === 0 || !xAxis) return null;
 
     switch (chartType) {
@@ -43,7 +49,7 @@ const DataVisualization: React.FC = () => {
             {
               x: parsedData.map((row) => row[xAxis]),
               type: "histogram",
-            },
+            } as Data,
           ],
           layout: { title: `Histogram of ${xAxis}` },
         };
@@ -56,7 +62,7 @@ const DataVisualization: React.FC = () => {
               y: parsedData.map((row) => row[yAxis]),
               mode: "markers",
               type: "scatter",
-            },
+            } as Data,
           ],
           layout: {
             title: `${xAxis} vs ${yAxis}`,
@@ -71,7 +77,7 @@ const DataVisualization: React.FC = () => {
               y: parsedData.map((row) => row[xAxis]),
               type: "box",
               name: xAxis,
-            },
+            } as Data,
           ],
           layout: { title: `Box Plot of ${xAxis}` },
         };
