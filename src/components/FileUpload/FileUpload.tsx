@@ -14,7 +14,7 @@ import * as XLSX from "xlsx";
 const FileUpload: React.FC = () => {
   const dispatch = useDispatch();
 
-  const parseFile = (file: File) => {
+  const parseFile = useCallback((file: File) => {
     dispatch(setLoading(true));
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
 
@@ -51,7 +51,7 @@ const FileUpload: React.FC = () => {
     } else {
       dispatch(setError("Unsupported file type"));
     }
-  };
+  }, [dispatch]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -67,7 +67,7 @@ const FileUpload: React.FC = () => {
         parseFile(file);
       }
     },
-    [dispatch, parseFile] // Add parseFile here
+    [dispatch, parseFile]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

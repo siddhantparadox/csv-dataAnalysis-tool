@@ -318,7 +318,7 @@ const Guide: React.FC = () => {
                   <p className="mt-2"><strong>Supported Formulas and Operations:</strong></p>
                   <ul className="list-disc pl-5 mt-2">
                     <li>Basic arithmetic: <code>+</code> (addition), <code>-</code> (subtraction), <code>*</code> (multiplication), <code>/</code> (division), <code>%</code> (modulo)</li>
-                    <li>Comparison: <code>></code>, <code>&lt;</code>, <code>>=</code>, <code>&lt;=</code>, <code>==</code>, <code>!=</code></li>
+                    <li>Comparison: <code>{'>'}</code>, <code>&lt;</code>, <code>{'>='}</code>, <code>&lt;=</code>, <code>==</code>, <code>!=</code></li>
                     <li>Logical operators: <code>&&</code> (AND), <code>||</code> (OR), <code>!</code> (NOT)</li>
                     <li>Math functions: <code>abs()</code>, <code>sqrt()</code>, <code>pow()</code>, <code>exp()</code>, <code>log()</code>, <code>round()</code>, <code>floor()</code>, <code>ceil()</code></li>
                     <li>Trigonometric functions: <code>sin()</code>, <code>cos()</code>, <code>tan()</code></li>
