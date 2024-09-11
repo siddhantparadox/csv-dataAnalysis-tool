@@ -310,20 +310,20 @@ const Guide: React.FC = () => {
                   </ol>
                   <p className="mt-2"><strong>Examples:</strong></p>
                   <ul className="list-disc pl-5 mt-2">
-                    <li><code>Total = Price * Quantity</code> (Simple multiplication)</li>
-                    <li><code>BMI = Weight / (Height * Height)</code> (Body Mass Index calculation)</li>
-                    <li><code>IsExpensive = Price > 1000 ? 1 : 0</code> (Conditional calculation)</li>
-                    <li><code>GrowthRate = (CurrentValue - PreviousValue) / PreviousValue * 100</code> (Percentage change)</li>
+                    <li><code>{`Total = Price * Quantity`}</code> (Simple multiplication)</li>
+                    <li><code>{`BMI = Weight / (Height * Height)`}</code> (Body Mass Index calculation)</li>
+                    <li><code>{`IsExpensive = Price > 1000 ? 1 : 0`}</code> (Conditional calculation)</li>
+                    <li><code>{`GrowthRate = (CurrentValue - PreviousValue) / PreviousValue * 100`}</code> (Percentage change)</li>
                   </ul>
                   <p className="mt-2"><strong>Supported Formulas and Operations:</strong></p>
                   <ul className="list-disc pl-5 mt-2">
                     <li>Basic arithmetic: <code>+</code> (addition), <code>-</code> (subtraction), <code>*</code> (multiplication), <code>/</code> (division), <code>%</code> (modulo)</li>
-                    <li>Comparison: <code>{'>'}</code>, <code>&lt;</code>, <code>{'>='}</code>, <code>&lt;=</code>, <code>==</code>, <code>!=</code></li>
-                    <li>Logical operators: <code>&&</code> (AND), <code>||</code> (OR), <code>!</code> (NOT)</li>
+                    <li>Comparison: <code>{`>`}</code>, <code>{`<`}</code>, <code>{`>=`}</code>, <code>{`<=`}</code>, <code>{`==`}</code>, <code>{`!=`}</code></li>
+                    <li>Logical operators: <code>{`&&`}</code> (AND), <code>{`||`}</code> (OR), <code>!</code> (NOT)</li>
                     <li>Math functions: <code>abs()</code>, <code>sqrt()</code>, <code>pow()</code>, <code>exp()</code>, <code>log()</code>, <code>round()</code>, <code>floor()</code>, <code>ceil()</code></li>
                     <li>Trigonometric functions: <code>sin()</code>, <code>cos()</code>, <code>tan()</code></li>
                     <li>Statistical functions: <code>min()</code>, <code>max()</code>, <code>mean()</code>, <code>median()</code>, <code>sum()</code></li>
-                    <li>Conditional operator: <code>condition ? value_if_true : value_if_false</code></li>
+                    <li>Conditional operator: <code>{`condition ? value_if_true : value_if_false`}</code></li>
                   </ul>
                   <p className="mt-2"><strong>Tips for Custom Calculations:</strong></p>
                   <ul className="list-disc pl-5 mt-2">
