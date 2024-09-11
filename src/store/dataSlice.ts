@@ -7,6 +7,7 @@ interface DataState {
     size: number;
   } | null;
   parsedData: any[] | null;
+  originalData: any[] | null; // Add this line
   loading: boolean;
   error: string | null;
 }
@@ -14,6 +15,7 @@ interface DataState {
 const initialState: DataState = {
   fileInfo: null,
   parsedData: null,
+  originalData: null, // Add this line
   loading: false,
   error: null,
 };
@@ -32,6 +34,7 @@ const dataSlice = createSlice({
     },
     setParsedData: (state, action: PayloadAction<any[]>) => {
       state.parsedData = action.payload;
+      state.originalData = action.payload; // Add this line
       state.loading = false;
       state.error = null;
     },
@@ -47,6 +50,10 @@ const dataSlice = createSlice({
         state.parsedData = action.payload.newData;
       }
     },
+    // Add a new action to update parsedData without affecting originalData
+    updateParsedData: (state, action: PayloadAction<any[]>) => {
+      state.parsedData = action.payload;
+    },
   },
 });
 
@@ -56,5 +63,6 @@ export const {
   setLoading,
   setError,
   addCalculatedColumn,
+  updateParsedData, // Export the new action
 } = dataSlice.actions;
 export default dataSlice.reducer;
