@@ -58,8 +58,18 @@ const CustomCalculations: React.FC = () => {
   };
 
   const safeEval = (formula: string, row: any): number => {
-    // Implementation of safeEval function (as before)
-    // ...
+    // Create a function from the formula
+    const func = new Function(...Object.keys(row), `return ${formula}`);
+    
+    // Call the function with the row values
+    const result = func(...Object.values(row));
+    
+    // Ensure the result is a number
+    if (typeof result !== 'number' || isNaN(result)) {
+      throw new Error('Formula must return a numeric result');
+    }
+    
+    return result;
   };
 
   return (
