@@ -15,7 +15,6 @@ import FileUpload from "../components/FileUpload/FileUpload";
 import DataPreview from "../components/DataPreview/DataPreview";
 import BasicAnalysis from "../components/Analysis/BasicAnalysis";
 import CorrelationAnalysis from "../components/Analysis/CorrelationAnalysis";
-import AIInsights from "../components/AIInsights/AIInsights";
 import DataExport from "../components/DataExport/DataExport";
 import LoadingSpinner from "../components/LoadingSpinner";
 import DataPreprocessing from "../components/DataPreprocessing/DataPreprocessing";
@@ -39,6 +38,9 @@ import {
   MoreHorizontal,
   Filter,
 } from "lucide-react";
+
+// New import for enhanced AIInsights
+import AIInsights from "@/components/AIInsights/AIInsights";
 
 const DataVisualization = dynamic(
   () => import("../components/Visualization/DataVisualization"),
