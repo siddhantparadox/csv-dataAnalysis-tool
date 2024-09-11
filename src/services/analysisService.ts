@@ -1,4 +1,5 @@
 import * as mathjs from "mathjs";
+import { ColumnStats } from '../types';
 
 export interface ColumnStats {
   mean: number | null;
@@ -12,6 +13,9 @@ export interface ColumnStats {
   kurtosis: number | null;
   validCount: number;
   invalidCount: number;
+  q1: number;
+  q3: number;
+  iqr: number;
 }
 
 export interface CorrelationResult {
@@ -24,61 +28,37 @@ export const calculateColumnStats = (
   data: any[],
   column: string
 ): ColumnStats => {
-  const allValues = data.map((row) => row[column]);
-  const values = allValues
-    .map((val) => (typeof val === "string" ? val.trim() : val))
-    .map((val) => parseFloat(val))
-    .filter((val) => !isNaN(val) && isFinite(val));
+  const values = data.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+  values.sort((a, b) => a - b);
 
-  const validCount = values.length;
-  const invalidCount = allValues.length - validCount;
+  const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+  const median = values[Math.floor(values.length / 2)];
+  const min = values[0];
+  const max = values[values.length - 1];
 
-  if (validCount === 0) {
-    return {
-      mean: null,
-      median: null,
-      mode: null,
-      min: null,
-      max: null,
-      stddev: null,
-      variance: null,
-      skewness: null,
-      kurtosis: null,
-      validCount,
-      invalidCount,
-    };
+  const variance = values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / values.length;
+  const stddev = Math.sqrt(variance);
+
+  const q1Index = Math.floor(values.length / 4);
+  const q3Index = Math.floor(3 * values.length / 4);
+  const q1 = values[q1Index];
+  const q3 = values[q3Index];
+  const iqr = q3 - q1;
+
+  // Mode calculation (simplified, might not work well for continuous data)
+  const modeMap: {[key: number]: number} = {};
+  let maxCount = 0;
+  let mode: number | string = NaN;
+  for (const value of values) {
+    if (!modeMap[value]) modeMap[value] = 0;
+    modeMap[value]++;
+    if (modeMap[value] > maxCount) {
+      maxCount = modeMap[value];
+      mode = value;
+    }
   }
 
-  const mean = mathjs.mean(values);
-  const median = mathjs.median(values);
-  const mode = mathjs.mode(values);
-  const min = mathjs.min(values);
-  const max = mathjs.max(values);
-  const stddev = mathjs.std(values);
-  const variance = mathjs.variance(values);
-
-  // Calculate skewness
-  const skewness = mathjs.mean(
-    values.map((v) => Math.pow((v - mean) / stddev, 3))
-  );
-
-  // Calculate kurtosis
-  const kurtosis =
-    mathjs.mean(values.map((v) => Math.pow((v - mean) / stddev, 4))) - 3;
-
-  return {
-    mean,
-    median,
-    mode,
-    min,
-    max,
-    stddev,
-    variance,
-    skewness,
-    kurtosis,
-    validCount,
-    invalidCount,
-  };
+  return { mean, median, mode, min, max, stddev, q1, q3, iqr };
 };
 
 export const detectColumnTypes = (data: any[]): Record<string, string> => {

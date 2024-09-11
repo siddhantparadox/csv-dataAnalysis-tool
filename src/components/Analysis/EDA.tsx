@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,7 @@ import {
   calculateColumnStats,
 } from "../../services/analysisService";
 import dynamic from "next/dynamic";
+import { ColumnStats } from "../../types";
 
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 
@@ -27,37 +28,53 @@ const EDA: React.FC = () => {
     if (!parsedData || parsedData.length === 0) return null;
 
     const columnTypes = detectColumnTypes(parsedData);
-    const analysisData: Record<string, any> = {};
+    const analysisResult: Record<string, ColumnStats> = {};
 
     Object.entries(columnTypes).forEach(([column, type]) => {
-      const values = parsedData.map((row) => row[column]);
-      const uniqueValues = new Set(values);
-      const missingValues = values.filter((v) => v === null || v === "").length;
-
-      analysisData[column] = {
-        type,
-        uniqueCount: uniqueValues.size,
-        missingCount: missingValues,
-        missingPercentage: (missingValues / values.length) * 100,
-      };
+      const values = parsedData.map(row => row[column]);
+      const missingCount = values.filter(v => v === null || v === undefined || v === '').length;
+      const missingPercentage = (missingCount / parsedData.length) * 100;
+      const uniqueCount = new Set(values).size;
 
       if (type === "numeric") {
         const stats = calculateColumnStats(parsedData, column);
-        analysisData[column] = {
-          ...analysisData[column],
-          ...stats,
-          outliers: values.filter((v) => {
-            const value = parseFloat(v);
-            return (
-              value < stats.q1 - 1.5 * stats.iqr ||
-              value > stats.q3 + 1.5 * stats.iqr
-            );
-          }).length,
+        const outliers = values.filter((v) => {
+          const value = parseFloat(v);
+          return !isNaN(value) && (
+            value < stats.q1 - 1.5 * stats.iqr ||
+            value > stats.q3 + 1.5 * stats.iqr
+          );
+        }).length;
+
+        analysisResult[column] = { 
+          ...stats, 
+          outliers, 
+          missingCount, 
+          missingPercentage,
+          uniqueCount,
+          type
+        };
+      } else {
+        analysisResult[column] = {
+          mean: NaN,
+          median: NaN,
+          mode: NaN,
+          min: NaN,
+          max: NaN,
+          stddev: NaN,
+          q1: NaN,
+          q3: NaN,
+          iqr: NaN,
+          outliers: 0,
+          missingCount,
+          missingPercentage,
+          uniqueCount,
+          type
         };
       }
     });
 
-    return analysisData;
+    return analysisResult;
   }, [parsedData]);
 
   const renderMissingValues = () => (
