@@ -1,56 +1,51 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface FileInfo {
-  name: string;
-  type: string;
-  size: number;
-}
-
 interface DataState {
-  fileInfo: FileInfo | null;
+  fileInfo: {
+    name: string;
+    type: string;
+    size: number;
+  } | null;
   parsedData: any[] | null;
-  originalData: any[] | null;
-  isLoading: boolean;
+  loading: boolean;
   error: string | null;
 }
 
 const initialState: DataState = {
   fileInfo: null,
   parsedData: null,
-  originalData: null,
-  isLoading: false,
+  loading: false,
   error: null,
 };
+
+interface CalculatedColumnPayload {
+  newColumnName: string;
+  newData: any[];
+}
 
 const dataSlice = createSlice({
   name: "data",
   initialState,
   reducers: {
-    setFileInfo: (state, action: PayloadAction<FileInfo>) => {
+    setFileInfo: (state, action: PayloadAction<DataState['fileInfo']>) => {
       state.fileInfo = action.payload;
-      state.parsedData = null;
-      state.originalData = null;
-      state.error = null;
     },
     setParsedData: (state, action: PayloadAction<any[]>) => {
       state.parsedData = action.payload;
-      if (!state.originalData) {
-        state.originalData = action.payload;
-      }
-      state.isLoading = false;
+      state.loading = false;
+      state.error = null;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
+      state.loading = action.payload;
     },
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
-      state.isLoading = false;
+      state.loading = false;
     },
-    clearError: (state) => {
-      state.error = null;
-    },
-    addCalculatedColumn: (state, action: PayloadAction<any[]>) => {
-      state.parsedData = action.payload;
+    addCalculatedColumn: (state, action: PayloadAction<CalculatedColumnPayload>) => {
+      if (state.parsedData) {
+        state.parsedData = action.payload.newData;
+      }
     },
   },
 });
@@ -60,7 +55,6 @@ export const {
   setParsedData,
   setLoading,
   setError,
-  clearError,
   addCalculatedColumn,
 } = dataSlice.actions;
 export default dataSlice.reducer;
