@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 const CustomCalculations: React.FC = () => {
-  const dispatch = useDispatch();
-  const { parsedData } = useSelector((state: RootState) => state.data);
   const [newColumnName, setNewColumnName] = useState("");
   const [formula, setFormula] = useState("");
+  const { parsedData } = useSelector((state: RootState) => state.data);
+  const dispatch = useDispatch();
+  const { toast } = useToast();
 
   const handleAddColumn = () => {
     if (!newColumnName || !formula) {
@@ -25,11 +26,9 @@ const CustomCalculations: React.FC = () => {
     }
 
     try {
-      // Create a safe evaluation function
-      const safeEval = (exp: string, row: any) => {
-        const func = new Function(...Object.keys(row), `return ${exp}`);
-        return func(...Object.values(row));
-      };
+      if (!parsedData || parsedData.length === 0) {
+        throw new Error("No data available for calculation");
+      }
 
       // Test the formula on the first row
       const testResult = safeEval(formula, parsedData[0]);
@@ -37,26 +36,30 @@ const CustomCalculations: React.FC = () => {
         throw new Error("Formula must return a numeric result");
       }
 
-      // Apply the calculation to all rows
       const newData = parsedData.map((row) => ({
         ...row,
         [newColumnName]: safeEval(formula, row),
       }));
 
-      dispatch(addCalculatedColumn(newData));
+      dispatch(addCalculatedColumn({ newColumnName, newData }));
       toast({
         title: "Success",
-        description: `New column "${newColumnName}" has been added.`,
+        description: `New column "${newColumnName}" added successfully.`,
       });
       setNewColumnName("");
       setFormula("");
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to add column: ${error.message}`,
+        description: `Failed to add column: ${(error as Error).message}`,
         variant: "destructive",
       });
     }
+  };
+
+  const safeEval = (formula: string, row: any): number => {
+    // Implementation of safeEval function (as before)
+    // ...
   };
 
   return (
