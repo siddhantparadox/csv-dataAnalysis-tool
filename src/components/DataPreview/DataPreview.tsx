@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button"; // Import Button component
 
 const DataPreview: React.FC = () => {
   const { parsedData, loading, error } = useSelector(
@@ -142,17 +143,25 @@ const DataPreview: React.FC = () => {
       <Pagination className="mt-4">
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious
+            <Button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-            />
+              variant="outline"
+              size="sm"
+            >
+              <PaginationPrevious />
+            </Button>
           </PaginationItem>
           {renderPaginationItems()}
           <PaginationItem>
-            <PaginationNext
+            <Button
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
-            />
+              variant="outline"
+              size="sm"
+            >
+              <PaginationNext />
+            </Button>
           </PaginationItem>
         </PaginationContent>
       </Pagination>
