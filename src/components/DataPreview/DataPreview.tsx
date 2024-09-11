@@ -10,94 +10,111 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 const DataPreview: React.FC = () => {
-  const { parsedData, isLoading, error } = useSelector(
+  const { parsedData, loading, error } = useSelector(
     (state: RootState) => state.data
   );
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!parsedData || parsedData.length === 0) return <div>No data available</div>;
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!parsedData || parsedData.length === 0) {
-    return <div>No data available. Please upload a file.</div>;
-  }
-
-  const headers = Object.keys(parsedData[0]);
   const totalPages = Math.ceil(parsedData.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const previewRows = parsedData.slice(startIndex, endIndex);
+  const currentData = parsedData.slice(startIndex, endIndex);
 
-  const handleRowsPerPageChange = (value: string) => {
-    setRowsPerPage(Number(value));
-    setCurrentPage(1); // Reset to first page when changing rows per page
-  };
+  const headers = Object.keys(parsedData[0]);
 
-  const handlePreviousPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
+  const renderPaginationItems = () => {
+    const items = [];
+    const maxVisiblePages = 5;
+    const halfVisible = Math.floor(maxVisiblePages / 2);
 
-  const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    let startPage = Math.max(1, currentPage - halfVisible);
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    if (startPage > 1) {
+      items.push(
+        <PaginationItem key="first">
+          <PaginationLink onClick={() => setCurrentPage(1)}>1</PaginationLink>
+        </PaginationItem>
+      );
+      if (startPage > 2) {
+        items.push(<PaginationEllipsis key="ellipsis-start" />);
+      }
+    }
+
+    for (let page = startPage; page <= endPage; page++) {
+      items.push(
+        <PaginationItem key={page}>
+          <PaginationLink
+            onClick={() => setCurrentPage(page)}
+            isActive={currentPage === page}
+          >
+            {page}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        items.push(<PaginationEllipsis key="ellipsis-end" />);
+      }
+      items.push(
+        <PaginationItem key="last">
+          <PaginationLink onClick={() => setCurrentPage(totalPages)}>
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    return items;
   };
 
   return (
-    <div className="mt-4">
-      <h2 className="text-2xl font-bold mb-4">Data Preview</h2>
+    <div>
       <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center">
-          <span className="mr-2">Rows per page:</span>
+        <h2 className="text-2xl font-bold">Data Preview</h2>
+        <div className="flex items-center space-x-2">
+          <Label htmlFor="rows-per-page">Rows per page:</Label>
           <Select
-            onValueChange={handleRowsPerPageChange}
             value={rowsPerPage.toString()}
+            onValueChange={(value) => {
+              setRowsPerPage(Number(value));
+              setCurrentPage(1);
+            }}
           >
-            <SelectTrigger className="w-[100px]">
+            <SelectTrigger className="w-[100px]" id="rows-per-page">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
+              {[10, 20, 50, 100].map((value) => (
+                <SelectItem key={value} value={value.toString()}>
+                  {value}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-        </div>
-        <div className="flex items-center">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handlePreviousPage}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="mx-2">
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
         </div>
       </div>
       <div className="overflow-x-auto">
@@ -110,7 +127,7 @@ const DataPreview: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {previewRows.map((row, index) => (
+            {currentData.map((row, index) => (
               <TableRow key={index}>
                 {headers.map((header) => (
                   <TableCell key={`${index}-${header}`}>
@@ -122,6 +139,23 @@ const DataPreview: React.FC = () => {
           </TableBody>
         </Table>
       </div>
+      <Pagination className="mt-4">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            />
+          </PaginationItem>
+          {renderPaginationItems()}
+          <PaginationItem>
+            <PaginationNext
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 };
