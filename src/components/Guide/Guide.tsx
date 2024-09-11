@@ -281,8 +281,8 @@ const Guide: React.FC = () => {
                       <li>Suggestions for further analysis</li>
                     </ul>
                     <p className="mt-2">
-                      <strong>How to use:</strong> Click on the "AI Insights"
-                      tab and press "Generate Insights". Our AI will analyze
+                      <strong>How to use:</strong> Click on the &quot;AI Insights&quot;
+                      tab and press &quot;Generate Insights&quot;. Our AI will analyze
                       your data and provide valuable observations.
                     </p>
                   </div>
@@ -303,10 +303,10 @@ const Guide: React.FC = () => {
                   </ul>
                   <p className="mt-2"><strong>How to use:</strong></p>
                   <ol className="list-decimal pl-5 mt-2">
-                    <li>Go to the "Custom Calc" tab</li>
+                    <li>Go to the &quot;Custom Calc&quot; tab</li>
                     <li>Enter a name for your new column</li>
                     <li>Write a formula using existing column names and supported operations</li>
-                    <li>Click "Add Calculated Column" to create it</li>
+                    <li>Click &quot;Add Calculated Column&quot; to create it</li>
                   </ol>
                   <p className="mt-2"><strong>Examples:</strong></p>
                   <ul className="list-disc pl-5 mt-2">
@@ -349,8 +349,8 @@ const Guide: React.FC = () => {
                       <li>Include calculated columns in export</li>
                     </ul>
                     <p className="mt-2">
-                      <strong>How to use:</strong> Navigate to the "Export" tab,
-                      select your export options, and click "Export Data" to
+                      <strong>How to use:</strong> Navigate to the &quot;Export&quot; tab,
+                      select your export options, and click &quot;Export Data&quot; to
                       download your file.
                     </p>
                   </div>
@@ -369,9 +369,9 @@ const Guide: React.FC = () => {
                       <li>Manage multiple projects</li>
                     </ul>
                     <p className="mt-2">
-                      <strong>How to use:</strong> Use the "Save Session" button
+                      <strong>How to use:</strong> Use the &quot;Save Session&quot; button
                       to store your current work. Load saved sessions from the
-                      "Manage Sessions" dropdown.
+                      &quot;Manage Sessions&quot; dropdown.
                     </p>
                   </div>
                 }
@@ -411,7 +411,7 @@ const Guide: React.FC = () => {
                 </li>
                 <li>
                   <Emoji symbol="🧠" label="brain" />{" "}
-                  <strong>Leverage AI Insights:</strong> Don't forget to check
+                  <strong>Leverage AI Insights:</strong> Don&apos;t forget to check
                   the AI Insights for interesting findings and suggestions for
                   further analysis.
                 </li>
@@ -430,7 +430,7 @@ const Guide: React.FC = () => {
                 <li>
                   <Emoji symbol="🔄" label="arrows clockwise" />{" "}
                   <strong>Iterate your analysis:</strong> Data analysis is often
-                  an iterative process. Don't be afraid to go back, try
+                  an iterative process. Don&apos;t be afraid to go back, try
                   different approaches, and refine your insights.
                 </li>
                 <li>
@@ -491,7 +491,7 @@ const Guide: React.FC = () => {
                 <li>
                   <Emoji symbol="🔒" label="locked" />{" "}
                   <strong>Data privacy:</strong> Always be mindful of data
-                  privacy. Use the data anonymization features if you're working
+                  privacy. Use the data anonymization features if you&apos;re working
                   with sensitive information.
                 </li>
                 <li>
@@ -514,9 +514,9 @@ const Guide: React.FC = () => {
         </CardHeader>
         <CardContent>
           <p className="text-white text-lg">
-            Now that you're equipped with these powerful tips and tricks, it's
+            Now that you&apos;re equipped with these powerful tips and tricks, it&apos;s
             time to start your data analysis journey! Remember, the key to great
-            insights is curiosity and persistence. Don't hesitate to explore all
+            insights is curiosity and persistence. Don&apos;t hesitate to explore all
             the features of our CSV Analysis Tool. Happy analyzing!
             <Emoji symbol="🚀" label="rocket" />
             <Emoji symbol="📊" label="bar chart" />
