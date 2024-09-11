@@ -58,17 +58,17 @@ const DataPreparation = () => (
 );
 
 const MainContent = () => {
-  const { isLoading, error, parsedData } = useSelector(
+  const { loading, error, parsedData } = useSelector(
     (state: RootState) => state.data
   );
   const [activeTab, setActiveTab] = useState("guide");
 
-  if (isLoading) {
-    return <LoadingSpinner />;
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div>Error: {error}</div>;
   }
 
   const renderContent = () => {
